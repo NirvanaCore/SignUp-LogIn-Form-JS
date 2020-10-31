@@ -56,6 +56,8 @@ signupPageLoad.addEventListener('click', (e) => {
 
 //validation for input in both form
 
+var loginEl1 = false;
+var loginEl2 = false;
 // login form validation
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -73,12 +75,12 @@ function checkLoginInput() {
   if (loginUsernameValue === '') {
     // show error and add error class
     setErrorFor(loginUsername, 'user name is empty');
-  } else if (!userNameValid(loginUsernameValue)) {
-    setErrorFor(
-      loginUsername,
-      'user name should contain 1upper case, 1lowercase, 1 number'
-    );
+  } else if (loginUsernameValue.length < 4) {
+    setErrorFor(loginUsername, 'name is too short');
+  } else if (loginUsernameValue.length > 15) {
+    setErrorFor(loginUsername, 'name is too long');
   } else {
+    loginEl1 = true;
     setSuccessFor(loginUsername);
   }
 
@@ -86,17 +88,35 @@ function checkLoginInput() {
   if (loginPasswordValue === '') {
     // show error and add error class
     setErrorFor(loginPassword, 'password is empty');
-  } else if (!PasswordValid(loginPasswordValue)) {
+  } else if (loginPasswordValue.length < 7) {
+    setErrorFor(loginPassword, 'password should contain minimum 6 digit');
+  } else if (loginPasswordValue.length > 16) {
+    setErrorFor(loginPassword, 'password should contain maximum 16 digit');
+  } else if (!upperLowerCase(loginPasswordValue)) {
     setErrorFor(
       loginPassword,
-      'password should contain 1-numbers,1-uppercase,1-lowercase,1-specialCharacter'
+      'password should contain both upper and lower case'
     );
+  } else if (!numbers(loginPasswordValue)) {
+    setErrorFor(loginPassword, 'password should contain 1 numbers');
+  } else if (!specialChar(loginPasswordValue)) {
+    setErrorFor(password, 'password should contain 1 special Character');
   } else {
+    loginEl2 = true;
     setSuccessFor(loginPassword);
+  }
+  if (loginEl1 === true && loginEl2 === true) {
+    setSuccessSubmit('Login');
   }
 }
 
 //sign up button validation
+
+var signUpEl1 = false;
+var signUpEl2 = false;
+var signUpEl3 = false;
+var signUpEl4 = false;
+
 signupForm.addEventListener('submit', (e) => {
   e.preventDefault();
   checkSignUpInput();
@@ -125,6 +145,7 @@ function checkSignUpInput() {
       'name should contain 1 number, 1uppercase, 1lowercase characters'
     );
   } else {
+    signUpEl1 = true;
     setSuccessFor(username);
   }
 
@@ -135,6 +156,7 @@ function checkSignUpInput() {
   } else if (!isEmail(emailValue)) {
     setErrorFor(email, 'enter valid email');
   } else {
+    signUpEl2 = true;
     setSuccessFor(email);
   }
 
@@ -153,6 +175,7 @@ function checkSignUpInput() {
   } else if (!specialChar(passwordValue)) {
     setErrorFor(password, 'password should contain 1 special Character');
   } else {
+    signUpEl3 = true;
     setSuccessFor(password);
   }
 
@@ -163,7 +186,17 @@ function checkSignUpInput() {
   } else if (passwordCheckValue !== passwordValue) {
     setErrorFor(passwordCheck, 'passwords does not match');
   } else {
+    signUpEl4 = true;
     setSuccessFor(passwordCheck);
+  }
+
+  if (
+    signUpEl1 === true &&
+    signUpEl2 === true &&
+    signUpEl3 === true &&
+    signUpEl4 === true
+  ) {
+    setSuccessSubmit('Signed-up');
   }
 }
 
@@ -210,4 +243,16 @@ function setSuccessFor(input) {
   const formControl = input.parentElement;
   //add class success
   formControl.className = 'form-control success';
+}
+
+// if all validation are successful then show msg
+function setSuccessSubmit(msg) {
+  //add msg to small
+  const smallMsg =document.querySelector(
+    '.smallMsg'
+  );
+  smallMsg.outerHTML = `Congratulations you have ${msg} successfully !!!`;
+  setTimeout(() => {
+    location.reload();
+  }, 2000);
 }
