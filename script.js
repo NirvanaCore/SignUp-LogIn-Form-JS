@@ -9,9 +9,18 @@ const bgButton = document.getElementById('bgChange');
 bgButton.addEventListener('click', generateBgImage);
 function generateBgImage() {
   // assigning url to src of background image
-  var url = 'https://picsum.photos/1200/1200';
-  bgImage.src = url;
-  generateBgImage();
+  fetch('https://picsum.photos/1200/1200')
+    .then((res) => res.blob())
+    .then((blob) => {
+      bgImage.src = URL.createObjectURL(blob);
+    });
+
+  // var url = 'https://picsum.photos/1200/1200';
+  // bgImage.src = url;
+
+  setInterval(() => {
+    generateBgImage();
+  }, 60000);
 }
 
 // LogIn/SignUp Form taking all input
@@ -248,9 +257,7 @@ function setSuccessFor(input) {
 // if all validation are successful then show msg
 function setSuccessSubmit(msg) {
   //add msg to small
-  const smallMsg =document.querySelector(
-    '.smallMsg'
-  );
+  const smallMsg = document.querySelector('.smallMsg');
   smallMsg.outerHTML = `Congratulations you have ${msg} successfully !!!`;
   setTimeout(() => {
     location.reload();
